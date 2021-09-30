@@ -1,0 +1,61 @@
+DROP DATABASE IF EXISTS prof_mod_ciclos_3;
+CREATE DATABASE prof_mod_ciclos_3;
+USE prof_mod_ciclos_3;
+
+CREATE TABLE profesores (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL
+);
+INSERT INTO profesores VALUES (1, "Pepe"),(2, "María");
+
+CREATE TABLE ciclos (
+	id CHAR(5) PRIMARY KEY
+);
+INSERT INTO ciclos VALUES ("DAM"),("DAW"),("ASIR");
+
+CREATE TABLE modulos (
+	id CHAR(5) PRIMARY KEY
+);
+INSERT INTO modulos VALUES ("BD"),("DWCS"),("SI");
+
+/**
+* Ej. propuesto: 
+* 1. Implementar tablas asociativas binarias entre las 3 tablas N:M del primer modelo de los apuntes (https://bit.ly/3jqFQMu)
+* 2. Insertar datos
+* 3. Crear las consultas que podrían mostrar el profesor que imparte BD en DAM y comprobar que no se puede conseguir
+* 4. Eliminar las tablas N:M antes de implementar la tabla ternaria
+*/
+
+/* Implementación de tabla asociativa ternaria 1:N:M */
+
+CREATE TABLE mod_cic_prof (
+    ciclo CHAR(5) NOT NULL,
+	modulo CHAR(5) NOT NULL,
+    profesor INT, -- Mínimo 0: Puede haber asociaciones de ciclos con módulo antes de asignarles un profesor (al revés no se podría)
+	FOREIGN KEY (ciclo) REFERENCES ciclos(id),
+	FOREIGN KEY (modulo) REFERENCES modulos(id),
+	FOREIGN KEY (profesor) REFERENCES profesores(id),
+    PRIMARY KEY (modulo,ciclo) /* No será necesario incluir el profesor en la PK ya que para un módulo y un ciclo solo puede haber 
+		un profesor, de modo que la PK con modulo y ciclo ya identifica completamente la entidad. O lo que es lo mismo: en una 1:N:M 
+        la PK solo require las FK de los 2 lados con cardinalidad máxima n. */
+);
+
+INSERT INTO mod_cic_prof VALUES ("DAM","BD", 1);
+INSERT INTO mod_cic_prof VALUES ("DAW","DWCS", 1);
+INSERT INTO mod_cic_prof VALUES ("DAM","SI", 2);
+INSERT INTO mod_cic_prof VALUES ("DAW","BD", 2);
+
+
+-- Si queremos saber el nombre del profesor que imparte BD en DAM:
+SELECT nombre -- Campo que queremos mostrar
+FROM profesores, mod_cic_prof -- Tablas necesarias para conseguir esa información
+WHERE profesores.id = mod_cic_prof.profesor -- Condición de interrelación entre las dos tablas
+	AND ciclo="DAM" AND modulo="BD" -- Condiciones del caso concreto buscado
+
+
+
+	
+
+
+
+    

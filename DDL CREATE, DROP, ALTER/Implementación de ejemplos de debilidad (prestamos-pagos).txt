@@ -1,0 +1,100 @@
+/*****************************************************************
+*** Entidades fuertes
+*****************************************************************/
+
+DROP DATABASE IF EXISTS prestamos_pagos_fuertes;
+CREATE DATABASE prestamos_pagos_fuertes;
+USE prestamos_pagos_fuertes;
+
+CREATE TABLE prestamos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad FLOAT(2) UNSIGNED NOT NULL
+);
+
+CREATE TABLE pagos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    id_prestamo INT REFERENCES prestamos(id),
+    num INT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad INT UNSIGNED NOT NULL,
+    FOREIGN KEY (id_prestamo) REFERENCES prestamos(id) -- Por defecto borrado restringido
+);
+
+INSERT INTO prestamos (cantidad) VALUES (2000.00); -- Prestamo 1: 2000€
+INSERT INTO prestamos (cantidad) VALUES (4000);
+INSERT INTO prestamos (cantidad) VALUES (1000);
+
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,1,1000); -- Primer pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,2,500);  -- Segundo pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (2,1,1000); -- Primer pago al prestamo 2
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,3,1000); -- Tercer pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,3,500); -- Tercer pago al prestamo 1 repetido por error
+
+
+/*****************************************************************
+*** Debilidad en existencia
+*****************************************************************/
+
+DROP DATABASE IF EXISTS prestamos_pagos_existencia;
+CREATE DATABASE prestamos_pagos_existencia;
+USE prestamos_pagos_existencia;
+
+CREATE TABLE prestamos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad FLOAT(2) UNSIGNED NOT NULL
+);
+
+CREATE TABLE pagos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    id_prestamo INT,
+    num INT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad INT UNSIGNED NOT NULL,
+    FOREIGN KEY (id_prestamo) REFERENCES prestamos(id) ON DELETE CASCADE  -- Borrado en cascada
+);
+
+INSERT INTO prestamos (cantidad) VALUES (2000.00); -- Prestamo 1: 2000€
+INSERT INTO prestamos (cantidad) VALUES (4000.55);
+INSERT INTO prestamos (cantidad) VALUES (1000);
+
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,1,1000); -- Primer pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,2,500);  -- Segundo pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (2,1,1000); -- Primer pago al prestamo 2
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,3,1000); -- Tercer pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,3,500); -- Tercer pago al prestamo 1 repetido por error
+
+
+/*****************************************************************
+*** Debilidad en identificación
+*****************************************************************/
+
+DROP DATABASE IF EXISTS prestamos_pagos_identificacion;
+CREATE DATABASE prestamos_pagos_identificacion;
+USE prestamos_pagos_identificacion;
+
+CREATE TABLE prestamos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad FLOAT(2) UNSIGNED NOT NULL
+);
+
+CREATE TABLE pagos (
+    id_prestamo INT,
+    num INT NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    cantidad INT UNSIGNED NOT NULL,
+    PRIMARY KEY (id_prestamo,num),
+    FOREIGN KEY (id_prestamo) REFERENCES prestamos(id) ON DELETE CASCADE  -- Borrado en cascada
+);
+
+INSERT INTO prestamos (cantidad) VALUES (2000.00); -- Prestamo 1: 2000€
+INSERT INTO prestamos (cantidad) VALUES (4000.55);
+INSERT INTO prestamos (cantidad) VALUES (1000);
+
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,1,1000); -- Primer pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,2,500);  -- Segundo pago al prestamo 1
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (2,1,1000); -- Primer pago al prestamo 2
+INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,3,1000); -- Tercer pago al prestamo 1
+-- INSERT INTO pagos(id_prestamo, num, cantidad) VALUES (1,3,1000); -- Tercer pago al prestamo 1 repetido por error

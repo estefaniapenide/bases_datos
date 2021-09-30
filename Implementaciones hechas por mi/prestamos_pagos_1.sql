@@ -1,0 +1,19 @@
+DROP DATABASE IF EXISTS prestamos_pagos_1;
+CREATE DATABASE prestamos_pagos_1;
+USE prestamos_pagos_1;
+
+CREATE TABLE prestamos(
+id_prestamo INT AUTO_INCREMENT PRIMARY KEY,
+fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+cantidad INT NOT NULL
+);
+
+CREATE TABLE pagos(
+id_pago INT AUTO_INCREMENT PRIMARY KEY,
+id_prestamo INT NOT NULL,
+FOREIGN KEY (id_prestamo) REFERENCES prestamos(id_prestamo),
+fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+num INT NOT NULL,
+cantidad INT NOT NULL
+);
+

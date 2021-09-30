@@ -1,0 +1,40 @@
+/* Ejemplo sencillo de creación de una tabla */
+
+
+-- DDL
+
+DROP DATABASE IF EXISTS personas; -- Elimina la bbdd para poder probar modificaciones en el script ejecutándolo entero cada vez
+CREATE DATABASE personas;
+USE personas; -- "Entra en la bbdd creada para realizar operaciones dentro
+
+CREATE TABLE clientes (
+	id INT AUTO_INCREMENT PRIMARY KEY, -- Clave primaria autoincrementada
+    nif VARCHAR(255) NOT NULL UNIQUE, -- UNIQUE = Identificador alternativo; no es PK pero no se puede repetir
+    nombre VARCHAR(255) NOT NULL,
+    apellido1 VARCHAR(255) NOT NULL,
+    apellido2 VARCHAR(255), -- NULL -- Atributo opcional
+    fnacimiento DATE NOT NULL
+);
+
+
+-- DML
+
+INSERT INTO clientes (nif, nombre, apellido1, apellido2, fnacimiento) -- El id no se explicita para que se asigne por defecto el autoincrementado (1)
+	VALUES ("11222333A", "Pepe", "Pérez", "Gómez", "2020-01-30"), 
+			("11222333E", "María", "Pérez", "Gómez", "2020-01-30"); -- Insertando varias filas en una sola instrucción
+    
+INSERT INTO clientes (id, nif, nombre, apellido1, apellido2, fnacimiento) 
+	VALUES (5,"11222333B", "Pepe", "Pérez", "Gómez", "2020-01-30"); -- id explícito
+
+INSERT INTO clientes -- Sintaxis simplificada (se pasan todos los campos en el orden en que fueron definidos
+	VALUES (3,"11222333D", "Pepe", "Pérez", "Gómez", "2020-01-30"); -- id explícito
+    
+INSERT INTO clientes (nombre, apellido1, fnacimiento, nif) -- No se indica un apellido2, se pondrá a NULL por defecto ya que se definió como opcional
+	VALUES ("Joe", "Doe", "2020-01-30","11222333C");
+    
+    
+-- DQL: Consulta sencilla
+
+SELECT nombre, apellido1, fnacimiento, nif 
+FROM clientes
+WHERE id=5;
